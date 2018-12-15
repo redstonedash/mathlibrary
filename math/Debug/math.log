@@ -1,0 +1,9 @@
+﻿  UTILS.cpp
+c:\users\s189064\source\repos\math\math\utils.cpp(11): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\s189064\source\repos\math\math\utils.cpp(13): warning C4305: 'argument': truncation from 'const double' to 'float'
+c:\users\s189064\source\repos\math\math\utils.cpp(15): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\s189064\source\repos\math\math\utils.cpp(20): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\s189064\source\repos\math\math\utils.cpp(29): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\s189064\source\repos\math\math\utils.cpp(33): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\s189064\source\repos\math\math\utils.cpp(170): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+  math.vcxproj -> C:\Users\s189064\source\repos\math\Debug\math.lib
