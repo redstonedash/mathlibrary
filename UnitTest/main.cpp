@@ -40,7 +40,15 @@ int main() {
 	assert(foxtroat != delta);
 	assert(math::vec2(1, 1).scale(math::vec2(-40, 40)) == math::vec2(-40, 40));
 	assert(math::fmod(5.5, 3)==2.5);
-	std::cout << math::sin(0.5f) << "\n";
+	std::cout << math::arcsin(0.5f ) << "\n";
+	std::cout << math::arcsin(0.2f ) << "\n";
+	std::cout << math::arcsin(1    ) << "\n";
+	std::cout << math::arcsin(-0.5f) << "\n";
+	std::cout << math::arcsin(-0.2f) << "\n";
+	std::cout << math::arcsin(-1   ) << "\n";
 	assert(math::abs(math::sin(0.5f) - 0.4794255386f) < FLT_EPSILON*10);
+	math::vec2 golf(0, -1);
+	math::vec2 Hotel(0, -1);
+	std::cout << golf.angleBetween(Hotel);
 	return 0;
 }

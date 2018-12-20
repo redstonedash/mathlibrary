@@ -1,9 +1,21 @@
-#pragma once
+﻿#pragma once
 namespace math
 {
+	const double PI = 3.14159265358979323;
+	const double π = PI;
+	const double Tau = PI * 2;
+	const double RAD_TO_DEG = Tau;
+	const double DEG_TO_RAD = PI / 180;
+
 	float sqrt(float f);
 
 	float sin(float angle);
+
+	float arcsin(float ratio);
+
+	float cos(float angle);
+
+	float arccos(float ratio);
 
 	struct vec2
 	{

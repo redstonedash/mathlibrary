@@ -2,12 +2,11 @@
 #include <cfloat>
 namespace math
 {
-	const double PI = 3.14159265358979323;
-	const double π = PI;
-	const double Tau = PI * 2;
-	const double RAD_TO_DEG = Tau;
-	const double DEG_TO_RAD = PI / 180;
 	float sin(float angle) { //SOH: sine = oposite / hyp; hyp = 1;
+		if (angle < 0) {
+			angle *= -1;
+			angle += PI;
+		}
 		angle = fmod(angle, PI*2);
 		bool half = angle >= PI;
 		angle = fmod(angle, PI);
@@ -19,6 +18,14 @@ namespace math
 		vec2 CCWBound = vec2(1, 0);
 		float angleUpperBound = PI / 2;
 		float angleLowerBound = 0;
+		if (angle == angleUpperBound) {
+			point = CCWBound;
+			return -((!half) ? ((sign) ? -point.y : -point.x) : ((sign) ? point.y : point.x));
+		}
+		if (angle == angleLowerBound) {
+			point = CWBound;
+			return -((!half) ? ((sign) ? -point.y : -point.x) : ((sign) ? point.y : point.x));
+		}
 		for (int i = 0; i < 100; i++) { //50 should be more than good enough
 			point = ((CWBound + CCWBound) ).getNormalized();
 			tempAngle = (angleUpperBound + angleLowerBound) / 2;
@@ -37,11 +44,79 @@ namespace math
 		point = ((CWBound + CCWBound) ).getNormalized();
 		return -((!half) ? ( (sign) ? -point.y : -point.x )  : ((sign) ? point.y : point.x));
 	}
-	/*float fmod(float a, float b) {
-		int tempA = a;
 
-		return 0.0f;
-	}*/
+	float cos(float angle) {
+		return(sin(angle - PI / 2));
+	}
+
+	float arcsin(float ratio) {
+		bool sign = false;
+		if(ratio < 0){
+			sign = true;
+			ratio *= -1;
+		}
+		ratio = clamp(ratio, 0, 1);
+		float averageAngle;
+		float CWBound = -PI / 2;
+		averageAngle = CWBound;
+
+		{
+			float tempRatio = sin(averageAngle);
+			if (tempRatio == ratio) {
+				if (sign) {
+					averageAngle *= -1;
+				}
+				return(averageAngle);
+			}
+		}
+		float CCWBound = PI / 2;
+
+		averageAngle = CCWBound;
+
+		{
+			float tempRatio = sin(averageAngle);
+			if (tempRatio == ratio) {
+				if (sign) {
+					averageAngle *= -1;
+				}
+				return(averageAngle);
+			}
+		}
+
+		for (int i = 0; i < 50; i++)//50 itterations should be more than accurate enough
+		{
+			averageAngle = (CCWBound + CWBound) / 2;
+			float tempRatio = sin(averageAngle);
+			if (tempRatio == ratio) {
+				if (sign) {
+					averageAngle *= -1;
+				}
+				return(averageAngle);
+			} else if (tempRatio > ratio) {
+				CCWBound = averageAngle;
+			} else {
+				CWBound = averageAngle;
+			}
+		}
+		if (sign) {
+			averageAngle *= -1;
+		}
+		return(averageAngle);
+	}
+
+	float arccos(float ratio) {
+		return PI/2 - arcsin(ratio);
+	}
+
+	vec2 operator*(const float lhs, const vec2 & rhs)
+	{
+		return vec2(lhs*rhs.x, lhs*rhs.y);
+	}
+
+	float vec2::angleBetween(const vec2 &rhs)const {
+		return arccos(this->dot(rhs) / (this->magnitude()*rhs.magnitude()));
+	}
+
 	float min(float a, float b) {
 		return (a < b) ? (a) : (b);
 	}
@@ -160,12 +235,6 @@ namespace math
 		vec.y = this->x;
 		return vec;
 	}
-
-	float vec2::angleBetween(const vec2 & rhs) const {
-		float dot = clamp(this->dot(rhs),-1,1); //TODO: finish angle between
-		return 0.0f;
-	}
-
 	float fmod(const float num, const float deno) {
 		int x = num / deno;
 		return num - x*deno;
@@ -219,14 +288,50 @@ namespace math
 		return !(*this == rhs);
 	}
 
+	vec2 vec2::operator-() const
+	{
+		return vec2();
+	}
+
 	vec2 vec2::operator+(const vec2 & rhs) const
 	{
 		return vec2(rhs.x+this->x, rhs.y+this->y);
 	}
 
+	vec2 vec2::operator-(const vec2 & rhs) const
+	{
+		return vec2(this->x-rhs.x,this->y-rhs.y);
+	}
+
+	vec2 vec2::operator*(const float rhs) const
+	{
+		return vec2(this->x * rhs, this->y * rhs);
+	}
+
 	vec2 vec2::operator/(const float rhs) const
 	{
 		return vec2(this->x/rhs, this->y/rhs);
+	}
+
+	vec2 & vec2::operator+=(const vec2 & rhs)
+	{
+		this->x += rhs.x;
+		this->y += rhs.y;
+		return *this;
+	}
+
+	vec2 & vec2::operator-=(const vec2 & rhs)
+	{
+		this->x -= rhs.x;
+		this->y -= rhs.y;
+		return *this;
+	}
+
+	vec2 & vec2::operator*=(const float rhs)
+	{
+		this->x *= rhs;
+		this->y *= rhs;
+		return *this;
 	}
 
 	/*
