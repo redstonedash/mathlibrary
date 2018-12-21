@@ -2,6 +2,10 @@
 #include <cfloat>
 namespace math
 {
+	bool aprox(float lhs, float rhs) {
+		return abs(lhs - rhs) < FLT_EPSILON;
+	}
+
 	float sin(float angle) { //SOH: sine = oposite / hyp; hyp = 1;
 		if (angle < 0) {
 			angle *= -1;
@@ -18,11 +22,11 @@ namespace math
 		vec2 CCWBound = vec2(1, 0);
 		float angleUpperBound = PI / 2;
 		float angleLowerBound = 0;
-		if (angle == angleUpperBound) {
+		if (aprox(angle, angleUpperBound)) {
 			point = CCWBound;
 			return -((!half) ? ((sign) ? -point.y : -point.x) : ((sign) ? point.y : point.x));
 		}
-		if (angle == angleLowerBound) {
+		if (aprox(angle,angleLowerBound)) {
 			point = CWBound;
 			return -((!half) ? ((sign) ? -point.y : -point.x) : ((sign) ? point.y : point.x));
 		}
@@ -62,7 +66,7 @@ namespace math
 
 		{
 			float tempRatio = sin(averageAngle);
-			if (tempRatio == ratio) {
+			if (aprox(tempRatio,ratio)) {
 				if (sign) {
 					averageAngle *= -1;
 				}
@@ -75,7 +79,7 @@ namespace math
 
 		{
 			float tempRatio = sin(averageAngle);
-			if (tempRatio == ratio) {
+			if (aprox(tempRatio, ratio)) {
 				if (sign) {
 					averageAngle *= -1;
 				}
@@ -87,7 +91,7 @@ namespace math
 		{
 			averageAngle = (CCWBound + CWBound) / 2;
 			float tempRatio = sin(averageAngle);
-			if (tempRatio == ratio) {
+			if (aprox(tempRatio, ratio)) {
 				if (sign) {
 					averageAngle *= -1;
 				}
@@ -111,6 +115,12 @@ namespace math
 	vec2 operator*(const float lhs, const vec2 & rhs)
 	{
 		return vec2(lhs*rhs.x, lhs*rhs.y);
+	}
+
+	vec3 operator*(const float lhs, const vec3 & rhs)
+	{
+		lh
+		return vec3();
 	}
 
 	float vec2::angleBetween(const vec2 &rhs)const {
@@ -161,8 +171,7 @@ namespace math
 	{
 		float tempCurrent = current;
 		if (current == target) {
-			return target; //we return target instead of current here because current may not be exactly target
-							//this is because of the float == operator;
+			return target;
 		}
 		if (current > target) {
 			maxDelta *= -1;
@@ -278,8 +287,8 @@ namespace math
 	bool vec2::operator==(const vec2 & rhs) const
 	{
 		return
-			this->x == rhs.x &&
-			this->y == rhs.y;
+			aprox(this->x, rhs.x) &&
+			aprox(this->y, rhs.y);
 		
 	}
 
@@ -290,9 +299,18 @@ namespace math
 
 	vec2 vec2::operator-() const
 	{
-		return vec2();
+		return vec2(-this->x,-this->y);
 	}
 
+
+	vec2::operator float*()
+	{
+		return &this->x;
+	}
+	vec2::operator const float*() const
+	{
+		return &this->x;
+	}
 	vec2 vec2::operator+(const vec2 & rhs) const
 	{
 		return vec2(rhs.x+this->x, rhs.y+this->y);
@@ -332,6 +350,76 @@ namespace math
 		this->x *= rhs;
 		this->y *= rhs;
 		return *this;
+	}
+
+	vec3::vec3()
+	{
+	}
+
+	vec3::vec3(float x, float y, float z)
+	{
+		this->x = x;
+		this->y = y;
+		this->z = z;
+	}
+
+	float vec3::magnitude() const
+	{
+		return sqrt(this->x*this->x + this->y*this->y + this->z*this->z);
+	}
+
+	float vec3::dot(const vec3 & rhs) const
+	{
+		return (this->x*rhs.x + this->y*rhs.y + this->z*rhs.z);
+	}
+
+	vec3 vec3::cross(const vec3 & rhs) const
+	{
+		return vec3(this->y * rhs.z - this->z * rhs.y, this->x * rhs.z - this->z * rhs.x, this->x * rhs.z - this->z * rhs.x);
+	}
+
+	vec3 & vec3::normalize()
+	{
+		*this /= this->magnitude();
+		return *this;
+	}
+
+	vec3 vec3::getNormalised() const
+	{
+		return *this/this->magnitude();
+	}
+
+	vec3 & vec3::scale(const vec3 & rhs)
+	{
+		this->x *= rhs.x;
+		this->y *= rhs.y;
+		this->z *= rhs.z;
+		return *this;
+	}
+
+	vec3 vec3::getScaled(const vec3 & rhs) const
+	{
+		return ;
+	}
+
+	vec3 vec3::operator+(const vec3 & rhs) const
+	{
+		return vec3(this->x+rhs.x, this->y + rhs.y, this->z + rhs.z);
+	}
+
+	vec3 vec3::operator-(const vec3 & rhs) const
+	{
+		return vec3(this->x - rhs.x, this->y - rhs.y, this->z - rhs.z);
+	}
+
+	vec3 vec3::operator*(const float rhs) const
+	{
+		return vec3(this->x * rhs, this->y * rhs, this->z * rhs);
+	}
+
+	vec3 vec3::operator/(const float rhs) const
+	{
+		return vec3(this->x/rhs, this->y/rhs, this->z/rhs);
 	}
 
 	/*
