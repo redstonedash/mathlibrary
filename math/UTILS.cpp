@@ -1,9 +1,11 @@
 ﻿#include "UTILS.h"
 #include <cfloat>
+
+
 namespace math
 {
 	bool aprox(float lhs, float rhs) {
-		return abs(lhs - rhs) < FLT_EPSILON;
+		return abs(lhs - rhs) <= FLT_EPSILON*50;
 	}
 
 	float sin(float angle) { //SOH: sine = oposite / hyp; hyp = 1;
@@ -119,8 +121,7 @@ namespace math
 
 	vec3 operator*(const float lhs, const vec3 & rhs)
 	{
-		lh
-		return vec3();
+		return vec3(lhs*rhs.x, lhs*rhs.y, lhs*rhs.z);
 	}
 
 	float vec2::angleBetween(const vec2 &rhs)const {
@@ -251,13 +252,13 @@ namespace math
 
 	float sqrt(float f)
 	{
-		float upperBound = f;
-		float lowerBound = 0;
-		float tempSqrt = f / 2;
-		float ans = tempSqrt*tempSqrt;
+		double upperBound = f;
+		double lowerBound = 0;
+		double tempSqrt = f / 2;
+		double ans = tempSqrt*tempSqrt;
 		if (f < 0)
 			throw "undefined squareRoot";
-		for(int i = 0; i < 35; i++) {
+		for(int i = 0; i < 100; i++) {
 			if (ans > f) {
 				upperBound = tempSqrt;
 				tempSqrt = (upperBound + lowerBound) / 2;
@@ -375,7 +376,10 @@ namespace math
 
 	vec3 vec3::cross(const vec3 & rhs) const
 	{
-		return vec3(this->y * rhs.z - this->z * rhs.y, this->x * rhs.z - this->z * rhs.x, this->x * rhs.z - this->z * rhs.x);
+		return vec3(
+			this->y * rhs.z - this->z * rhs.y, 
+			this->z * rhs.x - this->x * rhs.z, 
+			this->x * rhs.y - this->y * rhs.x);
 	}
 
 	vec3 & vec3::normalize()
@@ -399,7 +403,7 @@ namespace math
 
 	vec3 vec3::getScaled(const vec3 & rhs) const
 	{
-		return ;
+		return vec3(this->x * rhs.x, this->y * rhs.y, this->z *rhs.z);
 	}
 
 	vec3 vec3::operator+(const vec3 & rhs) const
@@ -420,6 +424,111 @@ namespace math
 	vec3 vec3::operator/(const float rhs) const
 	{
 		return vec3(this->x/rhs, this->y/rhs, this->z/rhs);
+	}
+
+	vec3 & vec3::operator+=(const vec3 & rhs)
+	{
+		this->x += rhs.x;
+		this->y += rhs.y;
+		this->z += rhs.z;
+		return *this;
+	}
+
+	vec3 & vec3::operator-=(const vec3 & rhs)
+	{
+		this->x -= rhs.x;
+		this->y -= rhs.y;
+		this->z -= rhs.z;
+		return *this;
+	}
+
+	vec3 & vec3::operator*=(const float rhs)
+	{
+		this->x *= rhs;
+		this->y *= rhs;
+		this->z *= rhs;
+		return *this;
+	}
+
+	vec3 & vec3::operator/=(const float rhs)
+	{
+		this->x /= rhs;
+		this->y /= rhs;
+		this->z /= rhs;
+		return *this;
+	}
+
+	bool vec3::operator==(const vec3 & rhs) const
+	{
+		return aprox(this->x,rhs.x)&& aprox(this->y, rhs.y) && aprox(this->z, rhs.z);
+	}
+
+	bool vec3::operator!=(const vec3 & rhs) const
+	{
+		return !(*this==rhs);
+	}
+
+	vec3 vec3::operator-() const
+	{
+		return *this*-1;
+	}
+
+	vec3::operator float*()
+	{
+		return &this->x;
+	}
+
+	vec3::operator const float*() const
+	{
+		return &this->x;
+	}
+
+	mat3::mat3()
+	{
+	}
+
+	mat3::mat3(float * ptr)
+	{
+		for (int i = 0; i < 9; i++) {
+			m[i] = ptr[i];
+		}
+	}
+
+	mat3::mat3(float m1, float m2, float m3, float m4, float m5, float m6, float m7, float m8, float m9)
+	{
+		m[0] = m1;
+		m[1] = m2;
+		m[2] = m3;
+		m[3] = m4;
+		m[4] = m5;
+		m[5] = m6;
+		m[6] = m7;
+		m[7] = m8;
+		m[8] = m9;
+	}
+
+	mat3 mat3::identity()
+	{
+		return mat3();
+	}
+
+	mat3 mat3::operator*(const mat3 & rhs) const
+	{
+		mat3 ans = mat3();
+		for (int i = 0; i < 3; i++) {
+			ans.mm[i][0] = vec3(this->mm[i][0], this->mm[i][1], this->mm[i][2]).dot(rhs.xAxis);
+			ans.mm[i][1] = vec3(this->mm[i][0], this->mm[i][1], this->mm[i][2]).dot(rhs.yAxis);
+			ans.mm[i][2] = vec3(this->mm[i][0], this->mm[i][1], this->mm[i][2]).dot(rhs.zAxis);
+		}
+		return ans;
+	}
+
+	bool mat3::operator==(const mat3 & rhs) const
+	{
+		return
+			aprox(rhs.mm[0][0], this->mm[0][0]) && aprox(rhs.mm[1][0], this->mm[1][0]) && aprox(rhs.mm[2][0], this->mm[2][0]) &&
+			aprox(rhs.mm[0][1], this->mm[0][1]) && aprox(rhs.mm[1][1], this->mm[1][1]) && aprox(rhs.mm[2][1], this->mm[2][1]) &&
+			aprox(rhs.mm[0][2], this->mm[0][2]) && aprox(rhs.mm[1][2], this->mm[1][2]) && aprox(rhs.mm[2][2], this->mm[2][2]);
 	}
 
 	/*

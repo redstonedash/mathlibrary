@@ -1,14 +1,15 @@
 ﻿  UTILS.cpp
-c:\users\s189064\source\repos\math\mathlibrary\math\utils.cpp(12): warning C4305: '+=': truncation from 'const double' to 'float'
-c:\users\s189064\source\repos\math\mathlibrary\math\utils.cpp(14): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\s189064\source\repos\math\mathlibrary\math\utils.cpp(16): warning C4305: 'argument': truncation from 'const double' to 'float'
-c:\users\s189064\source\repos\math\mathlibrary\math\utils.cpp(18): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\s189064\source\repos\math\mathlibrary\math\utils.cpp(23): warning C4305: 'initializing': truncation from 'double' to 'float'
-c:\users\s189064\source\repos\math\mathlibrary\math\utils.cpp(40): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\s189064\source\repos\math\mathlibrary\math\utils.cpp(44): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\s189064\source\repos\math\mathlibrary\math\utils.cpp(53): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\s189064\source\repos\math\mathlibrary\math\utils.cpp(64): warning C4305: 'initializing': truncation from 'double' to 'float'
-c:\users\s189064\source\repos\math\mathlibrary\math\utils.cpp(76): warning C4305: 'initializing': truncation from 'double' to 'float'
-c:\users\s189064\source\repos\math\mathlibrary\math\utils.cpp(112): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
-c:\users\s189064\source\repos\math\mathlibrary\math\utils.cpp(242): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\s189064\source\repos\math\mathlibrary\math\utils.cpp(377): error C2296: '/': illegal, left operand has type 'math::vec3 *'
+c:\users\s189064\source\repos\math\mathlibrary\math\utils.cpp(14): warning C4305: '+=': truncation from 'const double' to 'float'
+c:\users\s189064\source\repos\math\mathlibrary\math\utils.cpp(16): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\s189064\source\repos\math\mathlibrary\math\utils.cpp(18): warning C4305: 'argument': truncation from 'const double' to 'float'
+c:\users\s189064\source\repos\math\mathlibrary\math\utils.cpp(20): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\s189064\source\repos\math\mathlibrary\math\utils.cpp(25): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\s189064\source\repos\math\mathlibrary\math\utils.cpp(42): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\s189064\source\repos\math\mathlibrary\math\utils.cpp(46): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\s189064\source\repos\math\mathlibrary\math\utils.cpp(55): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\s189064\source\repos\math\mathlibrary\math\utils.cpp(66): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\s189064\source\repos\math\mathlibrary\math\utils.cpp(78): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\s189064\source\repos\math\mathlibrary\math\utils.cpp(114): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+c:\users\s189064\source\repos\math\mathlibrary\math\utils.cpp(249): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\s189064\source\repos\math\mathlibrary\math\utils.cpp(271): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+  math.vcxproj -> C:\Users\s189064\source\repos\math\mathlibrary\Debug\math.lib
