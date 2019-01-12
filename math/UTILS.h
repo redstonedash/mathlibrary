@@ -4,7 +4,7 @@ namespace math
 	const double PI = 3.14159265358979323;
 	const double π = PI;
 	const double Tau = PI * 2;
-	const double RAD_TO_DEG = Tau;
+	const double RAD_TO_DEG = 1/(PI/180);
 	const double DEG_TO_RAD = PI / 180;
 
 	float sqrt(float f);
@@ -19,7 +19,14 @@ namespace math
 
 	struct vec2
 	{
-		float x, y;
+		union {
+			struct {
+				float x, y;
+			};
+			struct {
+				float arr[2];
+			};
+		};
 
 		vec2();
 		vec2(float x, float y);
@@ -64,7 +71,14 @@ namespace math
 	class vec3
 	{
 	public:
-		float x, y, z;
+		union{
+			struct{
+				float x, y, z;
+			};
+			struct{
+				float arr[3];
+			};
+		};
 
 		vec3();
 		vec3(float x, float y, float z);
@@ -151,7 +165,7 @@ namespace math
 	int pow(int a, int b);
 	bool isPowerOfTwo(int a);
 	float moveTowards(float current, float target, float maxDelta);
-
+	
 	struct mat3
 	{
 		union
@@ -211,7 +225,7 @@ namespace math
 		mat3  operator*(const mat3 &rhs) const;
 		mat3 &operator*=(const mat3 &rhs);
 
-		// transforms a 4D vector by performing 4x4 x 4x1 matrix multiplication
+		// transforms a 3D vector by performing 3x3 x 3x1 matrix multiplication
 		vec3 operator*(const vec3 &rhs) const;
 		// convenience function for transforming a 2D vector
 		vec2 operator*(const vec2 &rhs) const;
@@ -219,4 +233,51 @@ namespace math
 		bool operator==(const mat3 &rhs) const;
 		bool operator!=(const mat3 &rhs) const;
 	};
+
+	/*class vec4
+	{
+		union {
+			struct {
+				float x, y, z, w;
+			};
+			struct {
+				float arr[4];
+			};
+		};
+
+		vec4();
+		vec4(float x, float y, float z, float w);
+
+		float magnitude() const;
+		float dot(const vec4 &rhs) const;
+		vec4 cross(const vec4 &rhs) const;
+
+		vec4 &normalize();
+		vec4 getNormalised() const;
+
+		vec4 &scale(const vec4 &rhs);
+		vec4 getScaled(const vec4 &rhs) const;
+
+		vec4 operator+(const vec4 &rhs) const;
+		vec4 operator-(const vec4 &rhs) const;
+		vec4 operator*(const float rhs) const;
+		friend vec4 operator*(const float lhs, const vec4 &rhs);
+		vec4 operator/(const float rhs) const;
+
+		vec4 &operator+=(const vec4 &rhs);
+		vec4 &operator-=(const vec4 &rhs);
+		vec4 &operator*=(const float rhs);
+		vec4 &operator/=(const float rhs);
+
+		bool operator==(const vec4 &rhs) const;
+		bool operator!=(const vec4 &rhs) const;
+
+		vec4 operator-() const;
+
+		operator float *();
+		operator const float *() const;
+	};*/
+
+	//vec4 operator*(const float lhs, const vec4 &rhs);
 }
+

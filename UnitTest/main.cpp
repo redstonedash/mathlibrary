@@ -119,14 +119,30 @@ int main() {
 	TEST("Vector2 normalize", v2a, Vector2(-0.269548f, -0.962987f));
 	TEST("Vector3 normalize", v3a, Vector3(0.0156349f, -0.0558571f, 0.998316f));
 	math::mat3 india = math::mat3(
-		1,2,3,
-		4,5,6,
-		7,8,9);
+		42,2,7,
+		8,5,3,
+		39,11,222);
 	math::mat3 julliet = math::mat3(
-		1, 0, 0,
-		0, 1, 0,
-		0, 0, 1
+		43, 54, 4,
+		25, 7, 21,
+		375, 322, 31
 	);
-	TEST("matrix multiplication with idnetity", india, india*julliet)
+	math::mat3 kilo = 
+		math::mat3(
+			4481, 4536, 427,
+			1594, 1433, 230,
+			85202, 73667, 7269
+		);
+	float yeah = math::cos(0.54);
+	TEST("cosine", 0.85770868136, yeah);
+	kilo.transpose();
+	india = india * julliet;
+	math::mat3 lima = math::mat3::rotation(0.2);
+	math::mat3 mike = math::mat3::rotation(0.4);
+	lima *= lima;
+	TEST("Rotation test", mike, lima);
+	mike = math::mat3::translation(199, 76);
+	lima = math::mat3::translation(199, 76)*math::mat3::identity();
+	TEST("Rotation test", mike, lima);
 	return 0;
 }

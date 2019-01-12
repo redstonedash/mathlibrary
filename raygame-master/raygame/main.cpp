@@ -12,32 +12,125 @@
 #include "UTILS.h"
 #include "raylib.h"
 #include <iostream>
-#include "PlayerMovement.h"
 #include <fstream>
 #include <string> 
 #include "GameObject.h"
 #include <vector>
 
+int playerBeingGrabed = 1; //player 1, no one, player 2
 
-int MAX_GAME_OBJECTS = 20;
+struct Player {
+	int playerNumber;
+	math::mat3 transform;
+	math::mat3 translation;
+	math::mat3 rotation;
+	math::mat3 scale;
+	math::mat3 grabOffset;
+	/*
+	[Xx][Yx][Tx]
+	[Xy][Yy][Ty]
+	[ 0][ 0][ 1]
+	*/
+	math::vec2 velocity = { 0, 0};
+	math::vec2 gamePadLastPos = { 0, 0 };
+	float hitstun = 0;
+	float stun = 0;
+	//float invincibility; //if i have time
+	float damage = 0;
+	float lag = 0;
+	Player(){}
+	Player(int playerNumber) {
+		this->playerNumber = playerNumber;
+	}
+};
 
-std::vector<GameObject> objectPool;
 
-Player player = Player();
+Player playerArr[2];
+void Draw(Player p) {
+	Rectangle rect = Rectangle();
+	rect.x = 0;
+	rect.y = 0;
+	rect.width  = 100;
+	rect.height = 100;
+	DrawRectanglePro(rect, { -p.transform.m3, -p.transform.m6 }, math::vec2(p.rotation.m1, p.rotation.m4).angleBetween({ 0,1 })*math::RAD_TO_DEG , 
+		{ (unsigned char)(155 + 155 + (100 * p.playerNumber)),(unsigned char)(100 * p.playerNumber),(unsigned char)(155 + (100 * p.playerNumber)),(unsigned char)255 });
+	//DrawRectanglePro(rect, { 500,500 }, i, PURPLE);
+}
+
+void Update(Player *p) {
+	p->transform.m3 += p->velocity.x;
+	p->transform.m6 += p->velocity.y;
+	p->velocity.y += GetFrameTime()*10;
+	/*PLAYER INPUT*/
+	/*BEING GRABED*/
+	/*DISABLED*/
+	bool disabled = false;
+	if (p->lag>0) {
+		p->lag -= GetFrameTime();
+		disabled = true;
+	}
+	if (true) {
+		p->stun -= GetFrameTime();
+		std::cout << GetFrameTime() << "\n";
+		p->rotation *= math::mat3::rotation(GetFrameTime()); //TODO: delete this
+		disabled = true;
+	}
+	if (p->hitstun > 0) {
+		p->hitstun -= GetFrameTime();
+		disabled = true;
+	}
+	if (disabled) goto applyTransformBeforeFunctionExit; //forgive me for i have sinned
+	if (IsGamepadAvailable(p->playerNumber))
+	{
+		
+		/*DODGE/GRAB*/
+		if ((math::vec2(GetGamepadAxisMovement(p->playerNumber, 0),
+			GetGamepadAxisMovement(p->playerNumber, 1)) - p->gamePadLastPos).magnitude() > 0.9 && math::vec2(GetGamepadAxisMovement(p->playerNumber, 0),
+				GetGamepadAxisMovement(p->playerNumber, 1)).magnitude()>0.5) {
+			//p->lag
+		}
+		/*THROW*/
+
+		/*MOVEMENT*/
+		p->velocity.x += GetGamepadAxisMovement(p->playerNumber, 0)*GetFrameTime()*30;
+		if (GetGamepadAxisMovement(p->playerNumber, 1)*GetFrameTime() > 0 && p->velocity.y) {
+			p->velocity.y += GetGamepadAxisMovement(p->playerNumber, 1) * GetFrameTime() * 40;
+		}
+		p->gamePadLastPos = {
+			GetGamepadAxisMovement(p->playerNumber, 0),
+			GetGamepadAxisMovement(p->playerNumber, 1)
+		};
+	}
+	applyTransformBeforeFunctionExit: //NEVER CALL RETURN IN THIS FUNCTION! ALWAYS GO HERE INSTEAD!
+	p->transform = p->scale*p->rotation*p->translation;
+	return;
+}
 
 int main()
 {
-	objectPool = std::vector<GameObject>();
+	playerArr[0] = Player(GAMEPAD_PLAYER1);
+	playerArr[1] = Player(GAMEPAD_PLAYER2);
+	playerArr[0].transform = math::mat3(0, 0, 0, 
+										0, 0, 0,
+										0, 0, 1);
+	playerArr[1].transform = math::mat3(0, 0, 0,
+										0, 0, 0,
+										0, 0, 1);
+	playerArr[0].translation = math::mat3::translation(200, 200);
+	playerArr[1].translation = math::mat3::translation(800, 100);
+	playerArr[0].rotation = math::mat3::identity();
+	playerArr[1].rotation = math::mat3::identity();
+	playerArr[0].scale = math::mat3::scale(1,1);
+	playerArr[1].scale = math::mat3::scale(-1,1);
+
 	// Initialization
 	//--------------------------------------------------------------------------------------
 	int screenWidth = 1060;
 	int screenHeight = 640;
-	int lightCount = 2;
-	double time = 0;
 
 	SetConfigFlags(FLAG_VSYNC_HINT);
 
-	InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window");
+	InitWindow(screenWidth, screenHeight, "GRABTHROW");
 
 	/*std::ifstream in("resources/shaders/glsl330/test.fs");
 	std::string contents((std::istreambuf_iterator<char>(in)),
@@ -54,41 +147,30 @@ int main()
 	// Main game loop
 	Vector2 mouseDelta = { 0,0 };
 	Vector2 mousePos = { 0,0 };
-
-	for (int i = 0; i < MAX_GAME_OBJECTS; i++) {
-		objectPool.push_back(GameObject());
-	}
-
+	bool OddFrame = true;
 	while (!WindowShouldClose())    // Detect window close button or ESC key
 	{
-		time += GetFrameTime();
 		// Update
 		//----------------------------------------------------------------------------------
 
 		BeginDrawing();
 
 		ClearBackground(WHITE);
-
-		for (float i = 0; i < 1000; i++) {
-			DrawPixel(i, (float)i / 10.0f, RED);
-			DrawPixel(i, (float)math::sin((float)i / 1000.0f * 6.28) * 200 + 320, BLACK);
+		if (OddFrame) {
+			Update(&playerArr[0]);
+			Update(&playerArr[1]);
+		} else {
+			Update(&playerArr[1]);
+			Update(&playerArr[0]);
 		}
-		std::cout << std::to_string((float)math::sin((float)GetTime() / 100.0f * 6.28)) << "\n";
-		math::vec2 a = math::vec2(2, 1).getNormalized();
-		DrawLine(0, 0, a.x*100, a.y * 100, BLUE);
-
+		Draw(playerArr[0]);
+		Draw(playerArr[1]);
 		DrawFPS(0, 0);
 
 		EndDrawing();
 		//----------------------------------------------------------------------------------
+		OddFrame = !OddFrame;
 	}
-
-	for (int i = 0; i < MAX_GAME_OBJECTS; i++) {
-		if (objectPool.at(i).enabled)
-			objectPool.at(i).unload();
-	}
-
-	objectPool.clear();
 
 	// De-Initialization
 	//--------------------------------------------------------------------------------------   

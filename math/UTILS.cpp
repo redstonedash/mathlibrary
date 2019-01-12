@@ -1,7 +1,6 @@
 ﻿#include "UTILS.h"
 #include <cfloat>
 
-
 namespace math
 {
 	bool aprox(float lhs, float rhs) {
@@ -52,7 +51,7 @@ namespace math
 	}
 
 	float cos(float angle) {
-		return(sin(angle - PI / 2));
+		return-(sin(angle - PI / 2));
 	}
 
 	float arcsin(float ratio) {
@@ -509,18 +508,122 @@ namespace math
 
 	mat3 mat3::identity()
 	{
-		return mat3();
+		return mat3(1,0,0,0,1,0,0,0,1);
+	}
+
+	mat3 mat3::translation(float x, float y)
+	{
+		return mat3(1, 0, x, 
+					0, 1, y, 
+					0, 0, 1);
+	}
+
+	mat3 mat3::translation(const vec2 & vec)
+	{
+		return mat3(1, 0, vec.x,
+					0, 1, vec.y,
+					0, 0, 1);
+	}
+
+	mat3 mat3::rotation(float rot)
+	{
+		return mat3(cos(rot), -sin(rot)  , 0, 
+					sin(rot), cos(rot)   , 0,
+					0       ,  0         , 1);
+	}
+
+	mat3 mat3::scale(float xScale, float yScale)
+	{
+		return mat3(xScale, 0     ,0,
+					0     , yScale,0,
+					0     ,      0,1);
+	}
+
+	void mat3::set(float m1, float m2, float m3, float m4, float m5, float m6, float m7, float m8, float m9)
+	{
+		this->m1 = m1;
+		this->m2 = m2;
+		this->m3 = m3;
+		this->m4 = m4;
+		this->m5 = m5;
+		this->m6 = m6;
+		this->m7 = m7;
+		this->m8 = m8;
+		this->m9 = m9;
+	}
+
+	void mat3::set(float * ptr)
+	{
+		for (int i = 0; i < 9; i++) {
+			m[i] = ptr[i];
+		}
+	}
+
+	void mat3::transpose()
+	{
+		*this = this->getTranspose();
+	}
+
+	mat3 mat3::getTranspose() const
+	{
+		return mat3(mm[0][0], mm[1][0], mm[2][0], 
+					mm[0][1], mm[1][1], mm[2][1], 
+					mm[0][2], mm[1][2], mm[2][2] );
+	}
+
+	mat3::operator float*()
+	{
+		return &m1;
+	}
+
+	mat3::operator const float*() const
+	{
+		return &m1;
+	}
+
+	vec3 & mat3::operator[](const int index)
+	{
+		vec3 temp = vec3(mm[index][0], mm[index][1], mm[index][2]);
+		return temp;
+	}
+
+	const vec3 & mat3::operator[](const int index) const
+	{
+		vec3 temp = vec3(mm[index][0], mm[index][1], mm[index][2]);
+		return temp;
 	}
 
 	mat3 mat3::operator*(const mat3 & rhs) const
 	{
 		mat3 ans = mat3();
-		for (int i = 0; i < 3; i++) {
-			ans.mm[i][0] = vec3(this->mm[i][0], this->mm[i][1], this->mm[i][2]).dot(rhs.xAxis);
-			ans.mm[i][1] = vec3(this->mm[i][0], this->mm[i][1], this->mm[i][2]).dot(rhs.yAxis);
-			ans.mm[i][2] = vec3(this->mm[i][0], this->mm[i][1], this->mm[i][2]).dot(rhs.zAxis);
+		for (int x = 0; x < 3; x++) {
+			for (int y = 0; y < 3; y++) {
+				ans.mm[x][y] = vec3(this->mm[y][0], this->mm[y][1], this->mm[y][2]).dot({ rhs.mm[0][x], rhs.mm[1][x], rhs.mm[2][x] });
+			}
 		}
-		return ans;
+		return ans.getTranspose();
+	}
+
+	vec3 mat3::operator*(const vec3 & rhs) const
+	{
+		return {
+			this->xAxis.dot(rhs),
+			this->yAxis.dot(rhs),
+			this->zAxis.dot(rhs)
+		};
+	}
+
+	mat3 & mat3::operator*=(const mat3 & rhs)
+	{
+		*this = mat3(*this*rhs);
+		return *this;
+	}
+
+	vec2 mat3::operator*(const vec2 & rhs) const
+	{
+		vec3 temp(rhs.x, rhs.y, 0);
+		temp = *this *temp;
+		return vec2(temp.x,temp.y);
 	}
 
 	bool mat3::operator==(const mat3 & rhs) const
@@ -531,6 +634,22 @@ namespace math
 			aprox(rhs.mm[0][2], this->mm[0][2]) && aprox(rhs.mm[1][2], this->mm[1][2]) && aprox(rhs.mm[2][2], this->mm[2][2]);
 	}
 
+	bool mat3::operator!=(const mat3 & rhs) const
+	{
+
+		return false;
+	}
+	/*
+	float vec4::magnitude() const
+	{
+		return math::sqrt(this->x*this->x + this->y*this->y + this->z*this->z + this->w*this->w);
+	}
+
+	float vec4::dot(const vec4 & rhs) const
+	{
+		return rhs.x;
+	}
+	*/
 	/*
 	float pow(float a, float b){
 		float temp;
