@@ -23,7 +23,7 @@ struct Player {
 	int playerNumber;
 	math::mat3 transform;
 	math::mat3 translation;
-	math::mat3 rotation;
+	float localRotation; //TODO: rework rotation
 	math::mat3 scale;
 	math::mat3 grabOffset;
 	/*
@@ -48,18 +48,18 @@ struct Player {
 Player playerArr[2];
 void Draw(Player p) {
 	Rectangle rect = Rectangle();
-	rect.x = 0;
-	rect.y = 0;
+	rect.x = p.transform.m3;
+	rect.y = p.transform.m6;
 	rect.width  = 100;
 	rect.height = 100;
-	DrawRectanglePro(rect, { -p.transform.m3, -p.transform.m6 }, math::vec2(p.rotation.m1, p.rotation.m4).angleBetween({ 0,1 })*math::RAD_TO_DEG , 
+	DrawRectanglePro(rect, { 0,  0}, math::vec2(p.rotation.m1, p.rotation.m4).angleBetween({ 0,1 })*math::RAD_TO_DEG , 
 		{ (unsigned char)(155 + 155 + (100 * p.playerNumber)),(unsigned char)(100 * p.playerNumber),(unsigned char)(155 + (100 * p.playerNumber)),(unsigned char)255 });
 	//DrawRectanglePro(rect, { 500,500 }, i, PURPLE);
 }
 
 void Update(Player *p) {
-	p->transform.m3 += p->velocity.x;
-	p->transform.m6 += p->velocity.y;
+	p->translation.m3 += p->velocity.x;
+	p->translation.m6 += p->velocity.y;
 	p->velocity.y += GetFrameTime()*10;
 	/*PLAYER INPUT*/
 	/*BEING GRABED*/
@@ -72,7 +72,7 @@ void Update(Player *p) {
 	if (true) {
 		p->stun -= GetFrameTime();
 		std::cout << GetFrameTime() << "\n";
-		p->rotation *= math::mat3::rotation(GetFrameTime()); //TODO: delete this
+		p->rotation *= math::mat3::rotation(GetFrameTime()*30); //TODO: delete this
 		disabled = true;
 	}
 	if (p->hitstun > 0) {
@@ -102,7 +102,7 @@ void Update(Player *p) {
 		};
 	}
 	applyTransformBeforeFunctionExit: //NEVER CALL RETURN IN THIS FUNCTION! ALWAYS GO HERE INSTEAD!
-	p->transform = p->scale*p->rotation*p->translation;
+	p->transform = p->scale*p->translation*p->rotation;
 	return;
 }
 
